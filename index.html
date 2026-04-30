@@ -866,14 +866,14 @@
     </div>
   </div>
 
-  <!-- Feature Banner -->
-  <div class="feature-banner">
-    <img class="feature-banner-img" referrerpolicy="no-referrer" src="https://images.unsplash.com/photo-1563245372-f21724e3856d?w=800&auto=format&fit=crop&fm=jpg&cs=tinysrgb" alt="Today's Special"/>
+  <!-- Feature Banner — Dynamic Today's Special -->
+  <div class="feature-banner" id="todays-special-banner">
+    <img class="feature-banner-img" referrerpolicy="no-referrer" id="special-banner-img" src="https://images.unsplash.com/photo-1563245372-f21724e3856d?w=800&auto=format&fit=crop&fm=jpg&cs=tinysrgb" alt="Today's Special"/>
     <div class="feature-banner-overlay"></div>
     <div class="feature-banner-text">
       <div class="feature-banner-label">Today's Special</div>
-      <div class="feature-banner-title">Kashmiri Kahwa</div>
-      <div class="feature-banner-sub">Saffron · Cardamom · Cinnamon — ₹70</div>
+      <div class="feature-banner-title" id="special-banner-name">Kashmiri Kahwa</div>
+      <div class="feature-banner-sub" id="special-banner-sub">Saffron · Cardamom · Cinnamon — ₹70</div>
     </div>
   </div>
 
@@ -1076,6 +1076,24 @@ function showCustomerApp() {
   document.getElementById('cart-table-label').textContent = `Table ${state.tableNumber}`;
   loadMenu();
   setupCategoryTabs();
+  loadTodaysSpecial();
+}
+
+async function loadTodaysSpecial() {
+  if (!firestoreOk) return; // default hardcoded banner stays
+  try {
+    const snap = await getDoc(doc(db, 'settings', 'main'));
+    if (!snap.exists()) return;
+    const d = snap.data();
+    if (!d.specialName) return;
+    // Update banner
+    document.getElementById('special-banner-name').textContent = d.specialName;
+    document.getElementById('special-banner-sub').textContent =
+      (d.specialDesc || d.specialName) + ' — ₹' + (d.specialPrice || '');
+    if (d.specialImg) {
+      document.getElementById('special-banner-img').src = d.specialImg;
+    }
+  } catch(e) { /* keep default */ }
 }
 
 async function loadMenu() {
