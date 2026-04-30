@@ -1012,6 +1012,31 @@
           <button class="btn btn-primary" onclick="saveSettings()" style="align-self:flex-start;">Save Settings</button>
         </div>
       </div>
+
+      <div class="settings-card">
+        <h3>⭐ Today's Special</h3>
+        <p style="font-size:0.85rem;color:var(--text-light);margin-bottom:16px;">Yeh banner customer app mein dikhta hai. Menu se koi bhi item select karo.</p>
+        <div class="settings-form">
+          <div>
+            <label>Item Select karo</label>
+            <select id="special-item-select" onchange="previewSpecial(this.value)">
+              <option value="">— Menu se choose karo —</option>
+            </select>
+          </div>
+          <div id="special-preview" style="display:none;background:rgba(200,131,42,0.08);border:1px solid rgba(200,131,42,0.2);border-radius:12px;padding:14px;display:flex;align-items:center;gap:14px;">
+            <img id="special-preview-img" src="" style="width:64px;height:64px;object-fit:cover;border-radius:8px;" referrerpolicy="no-referrer"/>
+            <div>
+              <div id="special-preview-name" style="font-weight:700;font-size:1rem;color:var(--espresso);"></div>
+              <div id="special-preview-price" style="color:var(--caramel);font-size:0.9rem;margin-top:2px;"></div>
+            </div>
+          </div>
+          <div>
+            <label>Custom Description (optional)</label>
+            <input type="text" id="special-desc" placeholder="e.g. Saffron · Cardamom · Cinnamon"/>
+          </div>
+          <button class="btn btn-primary" onclick="saveSpecial()" style="align-self:flex-start;">✓ Save Today's Special</button>
+        </div>
+      </div>
       <div class="settings-card">
         <h3>Change Admin PIN</h3>
         <div class="settings-form">
@@ -1197,6 +1222,65 @@ window.saveSettings = async () => {
       showToast('Settings saved ✓', 'success');
     } catch(e) { showToast('Saved locally only', 'warning'); }
   } else showToast('Settings saved (demo)', 'success');
+};
+
+// ─── TODAY'S SPECIAL ──────────────────────────────────
+function populateSpecialDropdown() {
+  const sel = document.getElementById('special-item-select');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">— Menu se choose karo —</option>';
+  state.menuItems.forEach(item => {
+    const opt = document.createElement('option');
+    opt.value = item.id;
+    opt.textContent = `${item.name} — ₹${item.price} (${item.category})`;
+    sel.appendChild(opt);
+  });
+  // Load current special from Firebase
+  if (firestoreOk) {
+    getDoc(doc(db, 'settings', 'main')).then(snap => {
+      if (snap.exists()) {
+        const d = snap.data();
+        if (d.specialItemId) {
+          sel.value = d.specialItemId;
+          previewSpecial(d.specialItemId);
+        }
+        if (d.specialDesc) document.getElementById('special-desc').value = d.specialDesc;
+      }
+    }).catch(() => {});
+  }
+}
+
+window.previewSpecial = (itemId) => {
+  const item = state.menuItems.find(i => i.id === itemId);
+  const preview = document.getElementById('special-preview');
+  if (!item) { if(preview) preview.style.display = 'none'; return; }
+  document.getElementById('special-preview-img').src = item.imageUrl || '';
+  document.getElementById('special-preview-name').textContent = item.name;
+  document.getElementById('special-preview-price').textContent = '₹' + item.price;
+  preview.style.display = 'flex';
+};
+
+window.saveSpecial = async () => {
+  const itemId = document.getElementById('special-item-select').value;
+  const desc = document.getElementById('special-desc').value.trim();
+  if (!itemId) return showToast('Pehle item select karo', 'error');
+  const item = state.menuItems.find(i => i.id === itemId);
+  if (!item) return;
+  const specialData = {
+    specialItemId: itemId,
+    specialName: item.name,
+    specialPrice: item.price,
+    specialImg: item.imageUrl || '',
+    specialDesc: desc || item.name,
+  };
+  if (firestoreOk) {
+    try {
+      await setDoc(doc(db, 'settings', 'main'), specialData, { merge: true });
+      showToast('Today's Special updated! ✓', 'success');
+    } catch(e) { showToast('Save failed', 'error'); }
+  } else {
+    showToast('Firebase connected nahi — demo mode', 'warning');
+  }
 };
 
 window.changePin = async () => {
@@ -1594,6 +1678,7 @@ async function loadAdminMenu() {
   if (!items.length) items = [...DEMO_MENU];
   state.menuItems = items;
   renderAdminMenu(items);
+  populateSpecialDropdown();
 }
 
 function renderAdminMenu(items) {
