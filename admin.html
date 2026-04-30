@@ -88,6 +88,13 @@
   @keyframes scaleIn { from{transform:scale(0.85);opacity:0} to{transform:scale(1);opacity:1} }
   @keyframes shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
   @keyframes ripple { 0%{transform:scale(0);opacity:1} 100%{transform:scale(4);opacity:0} }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-10px); }
+    40% { transform: translateX(10px); }
+    60% { transform: translateX(-8px); }
+    80% { transform: translateX(8px); }
+  }
 
   /* ─── SHARED COMPONENTS ─── */
   .btn {
@@ -1186,6 +1193,13 @@ window.addEventListener('DOMContentLoaded', () => {
   // Focus on PIN input if present
   const firstKey = document.querySelector('.pin-key');
   if (firstKey) firstKey.focus();
+  // Keyboard support for PIN
+  document.addEventListener('keydown', (e) => {
+    if (!document.getElementById('pin-screen') || document.getElementById('pin-screen').style.display === 'none') return;
+    if (e.key >= '0' && e.key <= '9') { pinKey(e.key); }
+    else if (e.key === 'Backspace') { pinClear(); }
+    else if (e.key === 'Enter') { pinEnter(); }
+  });
 });
 
 // Stub — not used in admin.html
@@ -1545,8 +1559,13 @@ window.pinEnter = () => {
   }
 };
 function updatePinDots() {
-  document.querySelectorAll('.pin-dot').forEach((d,i) => {
-    d.classList.toggle('filled', i < state.pinBuffer.length);
+  const dots = document.querySelectorAll('#pin-dots .pin-dot');
+  dots.forEach((d, i) => {
+    if (i < state.pinBuffer.length) {
+      d.classList.add('filled');
+    } else {
+      d.classList.remove('filled');
+    }
   });
 }
 window.ownerLogout = () => {
