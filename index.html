@@ -1227,8 +1227,13 @@ const EMOJIS = {'Chai':'🍵','Coffee':'☕','Snacks':'🥐','Combos':'🎁','Co
 
 // ─── ROUTE DETECTION — runs immediately before anything async ────
 (function immediateRoute() {
-  const isOwner = window.location.hash === '#owner' ||
-                  window.location.href.includes('#owner');
+  const path = window.location.pathname;
+  const hash = window.location.hash;
+  const params = new URLSearchParams(window.location.search);
+  const isOwner = path.endsWith('/owner') ||
+                  path.includes('/owner.html') ||
+                  hash === '#owner' ||
+                  params.get('mode') === 'owner';
   if (isOwner) {
     document.getElementById('owner-app').style.display = 'block';
     document.getElementById('customer-app').style.display = 'none';
@@ -1238,20 +1243,29 @@ const EMOJIS = {'Chai':'🍵','Coffee':'☕','Snacks':'🥐','Combos':'🎁','Co
   }
 })();
 // ─── INIT ─────────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', async () => {
-  await loadSettings();
+window.addEventListener('DOMContentLoaded', () => {
+  // Dismiss loading screen immediately — don't wait for Firebase
+  const ls = document.getElementById('loading-screen');
+  if (ls) { ls.classList.add('fade-out'); setTimeout(() => ls.remove(), 600); }
+
   determineRoute();
-  setTimeout(() => {
-    const ls = document.getElementById('loading-screen');
-    if (ls) { ls.classList.add('fade-out'); setTimeout(() => ls.remove(), 600); }
-  }, 1000);
+
+  // Load settings in background (non-blocking)
+  loadSettings().catch(() => {});
 });
 
 function determineRoute() {
+  const path = window.location.pathname;
   const hash = window.location.hash;
-  const href = window.location.href;
   const params = new URLSearchParams(window.location.search);
-  if (hash === '#owner' || href.includes('#owner')) {
+
+  // Support both /owner path (GitHub Pages) and #owner hash (local file)
+  const isOwner = path.endsWith('/owner') ||
+                  path.includes('/owner.html') ||
+                  hash === '#owner' ||
+                  params.get('mode') === 'owner';
+
+  if (isOwner) {
     document.getElementById('owner-app').style.display = 'block';
     document.getElementById('customer-app').style.display = 'none';
     showOwnerApp();
