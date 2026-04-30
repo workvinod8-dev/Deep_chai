@@ -392,40 +392,126 @@
   }
   .owner-badge { font-size: 0.7rem; color: var(--gold); letter-spacing: 3px; text-transform: uppercase; opacity: 0.7; }
 
-  /* PIN Screen */
+  /* ─── LOGIN SCREEN (Turf28-style) ─── */
   #pin-screen {
-    min-height: 100vh; background: var(--espresso);
+    min-height: 100vh;
+    background: #f0faf4;
+    background-image:
+      linear-gradient(rgba(200,131,42,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200,131,42,0.06) 1px, transparent 1px);
+    background-size: 32px 32px;
     display: flex; align-items: center; justify-content: center;
     padding: 20px;
+    flex-direction: column; gap: 16px;
   }
   .pin-card {
-    background: var(--dark-roast); border-radius: var(--radius);
-    padding: 40px 36px; max-width: 360px; width: 100%;
-    text-align: center; box-shadow: var(--shadow-lg);
-    border: 1px solid rgba(212,175,106,0.15);
+    background: #fff;
+    border-radius: 24px;
+    padding: 44px 40px 36px;
+    max-width: 400px; width: 100%;
+    text-align: center;
+    box-shadow: 0 8px 48px rgba(28,10,0,0.10), 0 2px 8px rgba(28,10,0,0.06);
     animation: scaleIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
   }
-  .pin-icon { font-size: 3.5rem; margin-bottom: 16px; }
-  .pin-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--cream); margin-bottom: 6px; }
-  .pin-sub { color: rgba(247,240,230,0.5); font-size: 0.85rem; margin-bottom: 28px; }
-  .pin-dots { display: flex; gap: 12px; justify-content: center; margin-bottom: 28px; }
-  .pin-dot {
-    width: 16px; height: 16px; border-radius: 50%;
-    border: 2px solid rgba(212,175,106,0.4); transition: var(--transition);
+
+  /* Logo badge */
+  .login-logo-wrap {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--mocha), var(--espresso));
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 18px;
+    box-shadow: 0 6px 24px rgba(28,10,0,0.20);
+    font-size: 2rem;
   }
-  .pin-dot.filled { background: var(--caramel); border-color: var(--caramel); }
-  .pin-numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-  .pin-key {
-    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);
-    color: var(--cream); border-radius: var(--radius-sm);
-    padding: 18px; font-size: 1.2rem; font-weight: 600; cursor: pointer;
-    transition: var(--transition); font-family: 'DM Sans', sans-serif;
+  .pin-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.9rem; font-weight: 700;
+    color: var(--espresso); letter-spacing: 4px;
+    text-transform: uppercase; margin-bottom: 4px;
   }
-  .pin-key:hover { background: rgba(200,131,42,0.2); border-color: rgba(200,131,42,0.3); }
-  .pin-key:active { transform: scale(0.93); }
-  .pin-key.clear { color: var(--danger); font-size: 1rem; }
-  .pin-key.enter { background: var(--caramel); border-color: var(--caramel); }
-  .pin-key.enter:hover { background: #A06820; }
+  .pin-sub {
+    font-size: 0.72rem; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--text-light); margin-bottom: 32px; font-weight: 600;
+  }
+
+  /* Login form fields */
+  .login-field-wrap { text-align: left; margin-bottom: 16px; }
+  .login-field-label {
+    display: block; font-size: 0.72rem; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--text-mid); margin-bottom: 7px;
+  }
+  .login-field-inner {
+    position: relative; display: flex; align-items: center;
+  }
+  .login-field-icon {
+    position: absolute; left: 14px; font-size: 1rem;
+    color: var(--text-light); pointer-events: none;
+  }
+  .login-input {
+    width: 100%; padding: 14px 14px 14px 42px;
+    border: 1.5px solid rgba(28,10,0,0.14);
+    border-radius: 12px; font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem; color: var(--text-dark);
+    background: #faf7f4; outline: none;
+    transition: var(--transition);
+  }
+  .login-input:focus {
+    border-color: var(--caramel);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(200,131,42,0.10);
+  }
+  .login-input::placeholder { color: #b8a090; }
+  .login-eye {
+    position: absolute; right: 14px;
+    background: none; border: none; cursor: pointer;
+    font-size: 1.1rem; color: var(--text-light); padding: 4px;
+    transition: var(--transition); line-height: 1;
+  }
+  .login-eye:hover { color: var(--caramel); }
+
+  /* Login button */
+  .login-btn {
+    width: 100%; padding: 16px;
+    background: linear-gradient(135deg, var(--mocha), var(--espresso));
+    color: #fff; border: none; border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; cursor: pointer;
+    transition: var(--transition); margin-top: 8px;
+    box-shadow: 0 4px 20px rgba(28,10,0,0.25);
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+  }
+  .login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(28,10,0,0.30);
+    background: linear-gradient(135deg, #6A3520, #0D0500);
+  }
+  .login-btn:active { transform: scale(0.98); }
+
+  .login-back {
+    display: block; margin-top: 20px;
+    font-size: 0.82rem; color: var(--text-light);
+    text-decoration: none; transition: var(--transition);
+  }
+  .login-back:hover { color: var(--caramel); }
+  .login-footer {
+    font-size: 0.72rem; color: var(--text-light);
+    letter-spacing: 0.5px; text-align: center;
+  }
+
+  /* Shake for wrong login */
+  @keyframes loginShake {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-6px); }
+    80% { transform: translateX(6px); }
+  }
+  .pin-card.shake { animation: loginShake 0.4s ease; }
+
+  /* Hide numpad-related stuff we no longer need */
+  .pin-dots, .pin-numpad { display: none !important; }
 
   /* Owner Nav */
   .owner-nav {
@@ -890,36 +976,44 @@
      OWNER APP
 ═══════════════════════════════════════════════════ -->
 <div id="owner-app">
-  <!-- PIN Screen (hidden in admin.html) -->
+  <!-- LOGIN SCREEN (Turf28-style) -->
   <div id="pin-screen">
-    <div class="pin-card">
-      <div class="pin-icon" style="font-size:2.5rem;font-family:'Playfair Display',serif;color:var(--gold);letter-spacing:2px;">DC</div>
-      <div class="pin-title" style="letter-spacing:5px;text-transform:uppercase;font-size:1.6rem;">DEEP CHAI</div>
-      <div class="admin-login-badge">🔐 Admin Panel</div>
-      <div class="pin-sub">Enter your password to continue</div>
-      <div class="pin-dots" id="pin-dots">
-        <div class="pin-dot" id="pin-dot-0"></div>
-        <div class="pin-dot" id="pin-dot-1"></div>
-        <div class="pin-dot" id="pin-dot-2"></div>
-        <div class="pin-dot" id="pin-dot-3"></div>
+    <div class="pin-card" id="login-card">
+      <!-- Logo -->
+      <div class="login-logo-wrap">☕</div>
+      <div class="pin-title">Deep Chai</div>
+      <div class="pin-sub">Admin Portal · Bengaluru</div>
+
+      <!-- Username -->
+      <div class="login-field-wrap">
+        <label class="login-field-label">Username</label>
+        <div class="login-field-inner">
+          <span class="login-field-icon">👤</span>
+          <input class="login-input" type="text" id="login-username"
+            placeholder="Enter username" autocomplete="username" autocapitalize="none"/>
+        </div>
       </div>
-      <div class="pin-numpad">
-        <button class="pin-key" type="button" data-pin-key="1">1</button>
-        <button class="pin-key" type="button" data-pin-key="2">2</button>
-        <button class="pin-key" type="button" data-pin-key="3">3</button>
-        <button class="pin-key" type="button" data-pin-key="4">4</button>
-        <button class="pin-key" type="button" data-pin-key="5">5</button>
-        <button class="pin-key" type="button" data-pin-key="6">6</button>
-        <button class="pin-key" type="button" data-pin-key="7">7</button>
-        <button class="pin-key" type="button" data-pin-key="8">8</button>
-        <button class="pin-key" type="button" data-pin-key="9">9</button>
-        <button class="pin-key clear" type="button" data-pin-key="backspace">⌫</button>
-        <button class="pin-key" type="button" data-pin-key="0">0</button>
-        <button class="pin-key enter" type="button" data-pin-key="enter">✓</button>
+
+      <!-- Password -->
+      <div class="login-field-wrap">
+        <label class="login-field-label">Password / PIN</label>
+        <div class="login-field-inner">
+          <span class="login-field-icon">🔑</span>
+          <input class="login-input" type="password" id="login-password"
+            placeholder="Enter password" autocomplete="current-password"/>
+          <button class="login-eye" id="toggle-pw" type="button" title="Show/hide password">👁</button>
+        </div>
       </div>
-      <div id="pin-error" style="color:#FF6B6B;font-size:0.82rem;margin-top:14px;min-height:20px;text-align:center;"></div>
-      <div class="pin-card-footer">Restricted Access · Deep Chai</div>
+
+      <div id="login-error" style="color:#c0392b;font-size:0.82rem;min-height:20px;margin-bottom:4px;text-align:left;font-weight:600;"></div>
+
+      <button class="login-btn" id="login-submit-btn" type="button">
+        🔒 &nbsp;Login to Admin
+      </button>
+
+      <a class="login-back" href="index.html">← Back to Deep Chai Website</a>
     </div>
+    <div class="login-footer">🔒 Secure admin access · Deep Chai</div>
   </div>
 
   <!-- Owner Dashboard -->
@@ -1191,30 +1285,71 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('owner-dashboard').style.display = 'none';
   loadSettings().catch(() => {});
 
-  // ── PIN NUMPAD: attach via addEventListener (fixes GitHub Pages CSP issue) ──
-  document.querySelectorAll('[data-pin-key]').forEach(btn => {
-    btn.addEventListener('click', function(e) {
-      e.preventDefault();
-      const k = this.getAttribute('data-pin-key');
-      if (k === 'backspace') { pinClear(); }
-      else if (k === 'enter') { pinEnter(); }
-      else { pinKey(k); }
+  // ── PASSWORD VISIBILITY TOGGLE ──
+  const togglePw = document.getElementById('toggle-pw');
+  const pwInput  = document.getElementById('login-password');
+  if (togglePw && pwInput) {
+    togglePw.addEventListener('click', () => {
+      pwInput.type = pwInput.type === 'password' ? 'text' : 'password';
+      togglePw.textContent = pwInput.type === 'password' ? '👁' : '🙈';
     });
-  });
+  }
 
-  // Focus first key for quick keyboard access
-  const firstKey = document.querySelector('.pin-key');
-  if (firstKey) firstKey.focus();
+  // ── LOGIN BUTTON ──
+  const loginBtn = document.getElementById('login-submit-btn');
+  if (loginBtn) {
+    loginBtn.addEventListener('click', doLogin);
+  }
 
-  // Keyboard support for PIN
+  // ── ENTER KEY ──
   document.addEventListener('keydown', (e) => {
     const pinScreen = document.getElementById('pin-screen');
     if (!pinScreen || pinScreen.style.display === 'none') return;
-    if (e.key >= '0' && e.key <= '9') { e.preventDefault(); pinKey(e.key); }
-    else if (e.key === 'Backspace') { e.preventDefault(); pinClear(); }
-    else if (e.key === 'Enter') { e.preventDefault(); pinEnter(); }
+    if (e.key === 'Enter') { e.preventDefault(); doLogin(); }
   });
+
+  // Focus username field
+  const unInput = document.getElementById('login-username');
+  if (unInput) setTimeout(() => unInput.focus(), 200);
 });
+
+function doLogin() {
+  const username = (document.getElementById('login-username')?.value || '').trim();
+  const password = (document.getElementById('login-password')?.value || '').trim();
+  const errEl    = document.getElementById('login-error');
+
+  if (!username) { if(errEl) errEl.textContent = 'Please enter username'; shakeCard(); return; }
+  if (!password) { if(errEl) errEl.textContent = 'Please enter password'; shakeCard(); return; }
+
+  // Check credentials
+  const validUser = 'admin';
+  const validPass = state.adminPin; // still uses adminPin (default '1234') from state/Firebase
+
+  if (username === validUser && password === validPass) {
+    if(errEl) errEl.textContent = '';
+    document.getElementById('pin-screen').style.display = 'none';
+    document.getElementById('owner-dashboard').style.display = 'block';
+    state.ownerLoggedIn = true;
+    loadOwnerData();
+    loadSettings().then(() => {
+      document.getElementById('setting-cafe-name').value = state.cafeName;
+    });
+  } else {
+    if(errEl) errEl.textContent = '✕  Wrong username or password. Try again.';
+    shakeCard();
+    if(document.getElementById('login-password')) document.getElementById('login-password').value = '';
+    setTimeout(() => { if(errEl) errEl.textContent = ''; }, 3000);
+  }
+}
+
+function shakeCard() {
+  const card = document.getElementById('login-card');
+  if (!card) return;
+  card.classList.remove('shake');
+  void card.offsetHeight;
+  card.classList.add('shake');
+  setTimeout(() => card.classList.remove('shake'), 450);
+}
 
 // Stub — not used in admin.html
 function determineRoute() {}
@@ -1593,10 +1728,14 @@ window.pinEnter = () => {
 window.ownerLogout = () => {
   state.ownerLoggedIn = false;
   state.pinBuffer = '';
-  updatePinDots();
   if (state.unsubscribeOrders) { state.unsubscribeOrders(); state.unsubscribeOrders = null; }
   document.getElementById('owner-dashboard').style.display = 'none';
   document.getElementById('pin-screen').style.display = 'flex';
+  // Clear login fields
+  const un = document.getElementById('login-username');
+  const pw = document.getElementById('login-password');
+  if (un) { un.value = ''; un.focus(); }
+  if (pw) pw.value = '';
   showToast('Logged out successfully', 'info');
 };
 
