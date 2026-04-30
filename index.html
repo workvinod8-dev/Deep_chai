@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="referrer" content="no-referrer"/>
 <title>Deep Chai</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
@@ -764,6 +765,34 @@
   </div>
 </div>
 
+<!-- CRITICAL: Dismiss loading screen immediately via plain script (not module) -->
+<script>
+  // This runs synchronously — no Firebase, no module wait
+  (function() {
+    // Route detection — immediate, before anything loads
+    var path = window.location.pathname;
+    var hash = window.location.hash;
+    var params = new URLSearchParams(window.location.search);
+    var isOwner = path.endsWith('/owner') ||
+                  path.includes('/owner.html') ||
+                  hash === '#owner' ||
+                  params.get('mode') === 'owner';
+    window.__isOwner = isOwner;
+
+    // Dismiss loading screen after a short visual beat
+    window.addEventListener('DOMContentLoaded', function() {
+      var ls = document.getElementById('loading-screen');
+      if (ls) {
+        setTimeout(function() {
+          ls.style.transition = 'opacity 0.5s';
+          ls.style.opacity = '0';
+          setTimeout(function() { ls.style.display = 'none'; }, 500);
+        }, 600);
+      }
+    });
+  })();
+</script>
+
 <!-- Toast Container -->
 <div class="toast-container" id="toast-container"></div>
 
@@ -803,7 +832,7 @@
 
   <!-- Hero -->
   <div class="hero-banner">
-    <img class="hero-bg-img" src="https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=900&q=80&auto=format&fit=crop" alt="Deep Chai ambiance"/>
+    <img class="hero-bg-img" referrerpolicy="no-referrer" src="https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=900&auto=format&fit=crop&fm=jpg&cs=tinysrgb" alt="Deep Chai ambiance"/>
     <div class="hero-overlay"></div>
     <div class="hero-content">
       <div class="hero-greeting">Welcome back</div>
@@ -820,23 +849,23 @@
   <!-- Category Image Strip -->
   <div class="cat-img-strip" id="cat-img-strip">
     <div class="cat-strip-card" onclick="document.querySelector('[data-cat=Chai]').click()">
-      <img class="cat-strip-img" src="https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=220&q=70&auto=format&fit=crop" alt="Chai"/>
+      <img class="cat-strip-img" referrerpolicy="no-referrer" src="https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=220&auto=format&fit=crop&fm=jpg&cs=tinysrgb" alt="Chai"/>
       <div class="cat-strip-label">Chai</div>
     </div>
     <div class="cat-strip-card" onclick="document.querySelector('[data-cat=Coffee]').click()">
-      <img class="cat-strip-img" src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=220&q=70&auto=format&fit=crop" alt="Coffee"/>
+      <img class="cat-strip-img" referrerpolicy="no-referrer" src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=220&auto=format&fit=crop&fm=jpg&cs=tinysrgb" alt="Coffee"/>
       <div class="cat-strip-label">Coffee</div>
     </div>
     <div class="cat-strip-card" onclick="document.querySelector('[data-cat=Snacks]').click()">
-      <img class="cat-strip-img" src="https://images.unsplash.com/photo-1604908177453-7462950a6a3b?w=220&q=70&auto=format&fit=crop" alt="Snacks"/>
+      <img class="cat-strip-img" referrerpolicy="no-referrer" src="https://images.unsplash.com/photo-1604908177453-7462950a6a3b?w=220&auto=format&fit=crop&fm=jpg&cs=tinysrgb" alt="Snacks"/>
       <div class="cat-strip-label">Snacks</div>
     </div>
     <div class="cat-strip-card" onclick="document.querySelector('[data-cat=Combos]').click()">
-      <img class="cat-strip-img" src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=220&q=70&auto=format&fit=crop" alt="Combos"/>
+      <img class="cat-strip-img" referrerpolicy="no-referrer" src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=220&auto=format&fit=crop&fm=jpg&cs=tinysrgb" alt="Combos"/>
       <div class="cat-strip-label">Combos</div>
     </div>
     <div class="cat-strip-card" onclick="document.querySelector('[data-cat=\'Cold Drinks\']').click()">
-      <img class="cat-strip-img" src="https://images.unsplash.com/photo-1544145945-f90425340c7e?w=220&q=70&auto=format&fit=crop" alt="Cold Drinks"/>
+      <img class="cat-strip-img" referrerpolicy="no-referrer" src="https://images.unsplash.com/photo-1544145945-f90425340c7e?w=220&auto=format&fit=crop&fm=jpg&cs=tinysrgb" alt="Cold Drinks"/>
       <div class="cat-strip-label">Cold Drinks</div>
     </div>
   </div>
@@ -855,7 +884,7 @@
 
   <!-- Feature Banner -->
   <div class="feature-banner">
-    <img class="feature-banner-img" src="https://images.unsplash.com/photo-1563245372-f21724e3856d?w=800&q=70&auto=format&fit=crop" alt="Today's Special"/>
+    <img class="feature-banner-img" referrerpolicy="no-referrer" src="https://images.unsplash.com/photo-1563245372-f21724e3856d?w=800&auto=format&fit=crop&fm=jpg&cs=tinysrgb" alt="Today's Special"/>
     <div class="feature-banner-overlay"></div>
     <div class="feature-banner-text">
       <div class="feature-banner-label">Today's Special</div>
@@ -1158,9 +1187,11 @@
 <!-- ═══════════════════════════════════════════════════
      SCRIPTS
 ═══════════════════════════════════════════════════ -->
-<script type="module">
+<!-- Firebase CDN (compat version — works without type=module) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
 // ─── FIREBASE CONFIG ────────────────────────────────
-// Replace with your actual Firebase config:
 const firebaseConfig = {
   apiKey: "AIzaSyAfYj5A3x2WVIoQCtHXScvzXei1meps7jE",
   authDomain: "deep-chai.firebaseapp.com",
@@ -1171,14 +1202,44 @@ const firebaseConfig = {
   measurementId: "G-VXN0BY7DVN"
 };
 
-// ─── FIREBASE INIT ────────────────────────────────────
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import {
-  getFirestore, collection, addDoc, getDocs, doc, updateDoc,
-  deleteDoc, onSnapshot, query, orderBy, where, serverTimestamp, getDoc, setDoc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
+// ─── FIREBASE INIT (compat API) ───────────────────────
 let app, db, firestoreOk = false;
+
+// Compat shims so existing code works unchanged
+function initializeApp(cfg) { return firebase.initializeApp(cfg); }
+function getFirestore(a) { return firebase.firestore(); }
+function collection(d, name) { return d.collection(name); }
+function addDoc(ref, data) { return ref.add(data); }
+function getDocs(ref) { return ref.get(); }
+function doc(d, ...segs) {
+  // doc(db, 'col', 'id') or doc(db, 'col/id')
+  if (segs.length === 1) return d.doc(segs[0]);
+  let r = d;
+  for (let i = 0; i < segs.length; i++) {
+    r = (i % 2 === 0) ? r.collection(segs[i]) : r.doc(segs[i]);
+  }
+  return r;
+}
+function updateDoc(ref, data) { return ref.update(data); }
+function deleteDoc(ref) { return ref.delete(); }
+function onSnapshot(ref, cb) { return ref.onSnapshot(cb); }
+function query(ref, ...constraints) {
+  let q = ref;
+  constraints.forEach(c => { q = c(q); });
+  return q;
+}
+function orderBy(field, dir) { return (ref) => ref.orderBy(field, dir || 'asc'); }
+function where(field, op, val) { return (ref) => ref.where(field, op, val); }
+function serverTimestamp() { return firebase.firestore.FieldValue.serverTimestamp(); }
+function getDoc(ref) { return ref.get(); }
+function setDoc(ref, data, opts) {
+  return opts && opts.merge ? ref.set(data, { merge: true }) : ref.set(data);
+}
+
+// Patch getDocs result to have forEach like QuerySnapshot
+const _origGetDocs = getDocs;
+
+// Snapshot.exists and snapshot.data() already work in compat mode ✓
 
 try {
   if (firebaseConfig.apiKey && firebaseConfig.apiKey !== 'YOUR_API_KEY') {
@@ -1189,6 +1250,8 @@ try {
 } catch(e) {
   console.warn("Firebase init failed – running in demo mode:", e.message);
 }
+
+let app2 = app, db2 = db; // aliases unused but kept for safety
 
 // ─── STATE ────────────────────────────────────────────
 const state = {
@@ -1206,21 +1269,21 @@ const state = {
 };
 
 const DEMO_MENU = [
-  { id:'dm1', name:'Masala Chai', category:'Chai', price:30, available:true, imageUrl:'https://images.unsplash.com/photo-1561336526-2914f13ceb36?w=400&q=70&auto=format&fit=crop', emoji:'🍵' },
-  { id:'dm2', name:'Adrak Chai', category:'Chai', price:35, available:true, imageUrl:'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&q=70&auto=format&fit=crop', emoji:'🫖' },
-  { id:'dm3', name:'Kashmiri Kahwa', category:'Chai', price:70, available:true, imageUrl:'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400&q=70&auto=format&fit=crop', emoji:'☕' },
-  { id:'dm4', name:'Lemongrass Chai', category:'Chai', price:45, available:true, imageUrl:'https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=400&q=70&auto=format&fit=crop', emoji:'🌿' },
-  { id:'dm5', name:'Espresso', category:'Coffee', price:60, available:true, imageUrl:'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=400&q=70&auto=format&fit=crop', emoji:'☕' },
-  { id:'dm6', name:'Cold Coffee', category:'Coffee', price:90, available:true, imageUrl:'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400&q=70&auto=format&fit=crop', emoji:'🧋' },
-  { id:'dm7', name:'Cappuccino', category:'Coffee', price:80, available:true, imageUrl:'https://images.unsplash.com/photo-1534778101976-62847782c213?w=400&q=70&auto=format&fit=crop', emoji:'☕' },
-  { id:'dm8', name:'Veg Sandwich', category:'Snacks', price:60, available:true, imageUrl:'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400&q=70&auto=format&fit=crop', emoji:'🥪' },
-  { id:'dm9', name:'Samosa (2 pcs)', category:'Snacks', price:30, available:true, imageUrl:'https://images.unsplash.com/photo-1604908177453-7462950a6a3b?w=400&q=70&auto=format&fit=crop', emoji:'🥟' },
-  { id:'dm10', name:'Butter Toast', category:'Snacks', price:40, available:true, imageUrl:'https://images.unsplash.com/photo-1484723091739-30990cb527c6?w=400&q=70&auto=format&fit=crop', emoji:'🍞' },
-  { id:'dm11', name:'Chai + Snack Combo', category:'Combos', price:75, available:true, imageUrl:'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&q=70&auto=format&fit=crop', emoji:'🎁' },
-  { id:'dm12', name:'Coffee + Sandwich', category:'Combos', price:130, available:true, imageUrl:'https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=400&q=70&auto=format&fit=crop', emoji:'🎁' },
-  { id:'dm13', name:'Lemonade', category:'Cold Drinks', price:50, available:true, imageUrl:'https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=400&q=70&auto=format&fit=crop', emoji:'🍋' },
-  { id:'dm14', name:'Mango Lassi', category:'Cold Drinks', price:70, available:true, imageUrl:'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=400&q=70&auto=format&fit=crop', emoji:'🥭' },
-  { id:'dm15', name:'Iced Tea', category:'Cold Drinks', price:55, available:true, imageUrl:'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&q=70&auto=format&fit=crop', emoji:'🧊' },
+  { id:'dm1', name:'Masala Chai', category:'Chai', price:30, available:true, imageUrl:'https://images.unsplash.com/photo-1561336526-2914f13ceb36?w=400&auto=format&fit=crop&fm=jpg&cs=tinysrgb', emoji:'🍵' },
+  { id:'dm2', name:'Adrak Chai', category:'Chai', price:35, available:true, imageUrl:'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&auto=format&fit=crop&fm=jpg&cs=tinysrgb', emoji:'🫖' },
+  { id:'dm3', name:'Kashmiri Kahwa', category:'Chai', price:70, available:true, imageUrl:'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400&auto=format&fit=crop&fm=jpg&cs=tinysrgb', emoji:'☕' },
+  { id:'dm4', name:'Lemongrass Chai', category:'Chai', price:45, available:true, imageUrl:'https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=400&auto=format&fit=crop&fm=jpg&cs=tinysrgb', emoji:'🌿' },
+  { id:'dm5', name:'Espresso', category:'Coffee', price:60, available:true, imageUrl:'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=400&auto=format&fit=crop&fm=jpg&cs=tinysrgb', emoji:'☕' },
+  { id:'dm6', name:'Cold Coffee', category:'Coffee', price:90, available:true, imageUrl:'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400&auto=format&fit=crop&fm=jpg&cs=tinysrgb', emoji:'🧋' },
+  { id:'dm7', name:'Cappuccino', category:'Coffee', price:80, available:true, imageUrl:'https://images.unsplash.com/photo-1534778101976-62847782c213?w=400&auto=format&fit=crop&fm=jpg&cs=tinysrgb', emoji:'☕' },
+  { id:'dm8', name:'Veg Sandwich', category:'Snacks', price:60, available:true, imageUrl:'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400&auto=format&fit=crop&fm=jpg&cs=tinysrgb', emoji:'🥪' },
+  { id:'dm9', name:'Samosa (2 pcs)', category:'Snacks', price:30, available:true, imageUrl:'https://images.unsplash.com/photo-1604908177453-7462950a6a3b?w=400&auto=format&fit=crop&fm=jpg&cs=tinysrgb', emoji:'🥟' },
+  { id:'dm10', name:'Butter Toast', category:'Snacks', price:40, available:true, imageUrl:'https://images.unsplash.com/photo-1484723091739-30990cb527c6?w=400&auto=format&fit=crop&fm=jpg&cs=tinysrgb', emoji:'🍞' },
+  { id:'dm11', name:'Chai + Snack Combo', category:'Combos', price:75, available:true, imageUrl:'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&auto=format&fit=crop&fm=jpg&cs=tinysrgb', emoji:'🎁' },
+  { id:'dm12', name:'Coffee + Sandwich', category:'Combos', price:130, available:true, imageUrl:'https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=400&auto=format&fit=crop&fm=jpg&cs=tinysrgb', emoji:'🎁' },
+  { id:'dm13', name:'Lemonade', category:'Cold Drinks', price:50, available:true, imageUrl:'https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=400&auto=format&fit=crop&fm=jpg&cs=tinysrgb', emoji:'🍋' },
+  { id:'dm14', name:'Mango Lassi', category:'Cold Drinks', price:70, available:true, imageUrl:'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=400&auto=format&fit=crop&fm=jpg&cs=tinysrgb', emoji:'🥭' },
+  { id:'dm15', name:'Iced Tea', category:'Cold Drinks', price:55, available:true, imageUrl:'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&auto=format&fit=crop&fm=jpg&cs=tinysrgb', emoji:'🧊' },
 ];
 
 const EMOJIS = {'Chai':'🍵','Coffee':'☕','Snacks':'🥐','Combos':'🎁','Cold Drinks':'🥤'};
@@ -1244,12 +1307,7 @@ const EMOJIS = {'Chai':'🍵','Coffee':'☕','Snacks':'🥐','Combos':'🎁','Co
 })();
 // ─── INIT ─────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
-  // Dismiss loading screen immediately — don't wait for Firebase
-  const ls = document.getElementById('loading-screen');
-  if (ls) { ls.classList.add('fade-out'); setTimeout(() => ls.remove(), 600); }
-
   determineRoute();
-
   // Load settings in background (non-blocking)
   loadSettings().catch(() => {});
 });
@@ -1258,9 +1316,8 @@ function determineRoute() {
   const path = window.location.pathname;
   const hash = window.location.hash;
   const params = new URLSearchParams(window.location.search);
-
-  // Support both /owner path (GitHub Pages) and #owner hash (local file)
-  const isOwner = path.endsWith('/owner') ||
+  const isOwner = window.__isOwner ||
+                  path.endsWith('/owner') ||
                   path.includes('/owner.html') ||
                   hash === '#owner' ||
                   params.get('mode') === 'owner';
@@ -1381,7 +1438,7 @@ function renderMenu(cat) {
       card.dataset.id = item.id;
       card.innerHTML = `
         <div class="item-img-wrap">
-          ${item.imageUrl ? `<img src="${item.imageUrl}" alt="${item.name}" onerror="this.parentElement.innerHTML='<div class=item-img-placeholder>${EMOJIS[item.category]||'🍽️'}</div>'"/>` : `<div class="item-img-placeholder">${EMOJIS[item.category]||'🍽️'}</div>`}
+          ${item.imageUrl ? `<img src="${item.imageUrl}" alt="${item.name}" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null;this.style.display='none';this.insertAdjacentHTML('afterend','<div class=item-img-placeholder style=width:100%;height:100%;>${EMOJIS[item.category]||chr(0x1F37D)}</div>')"/>` : `<div class="item-img-placeholder">${EMOJIS[item.category]||'🍽️'}</div>`}
           ${item.available===false ? '<span class="unavail-badge">Unavailable</span>' : ''}
         </div>
         <div class="item-info">
@@ -1957,5 +2014,6 @@ function drawQR(canvas, text) {
   });
 }
 
+</script>
 </body>
 </html>
