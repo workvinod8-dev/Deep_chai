@@ -904,18 +904,18 @@
         <div class="pin-dot" id="pin-dot-3"></div>
       </div>
       <div class="pin-numpad">
-        <button class="pin-key" onclick="pinKey('1')">1</button>
-        <button class="pin-key" onclick="pinKey('2')">2</button>
-        <button class="pin-key" onclick="pinKey('3')">3</button>
-        <button class="pin-key" onclick="pinKey('4')">4</button>
-        <button class="pin-key" onclick="pinKey('5')">5</button>
-        <button class="pin-key" onclick="pinKey('6')">6</button>
-        <button class="pin-key" onclick="pinKey('7')">7</button>
-        <button class="pin-key" onclick="pinKey('8')">8</button>
-        <button class="pin-key" onclick="pinKey('9')">9</button>
-        <button class="pin-key clear" onclick="pinClear()">⌫</button>
-        <button class="pin-key" onclick="pinKey('0')">0</button>
-        <button class="pin-key enter" onclick="pinEnter()">✓</button>
+        <button class="pin-key" type="button" data-pin-key="1">1</button>
+        <button class="pin-key" type="button" data-pin-key="2">2</button>
+        <button class="pin-key" type="button" data-pin-key="3">3</button>
+        <button class="pin-key" type="button" data-pin-key="4">4</button>
+        <button class="pin-key" type="button" data-pin-key="5">5</button>
+        <button class="pin-key" type="button" data-pin-key="6">6</button>
+        <button class="pin-key" type="button" data-pin-key="7">7</button>
+        <button class="pin-key" type="button" data-pin-key="8">8</button>
+        <button class="pin-key" type="button" data-pin-key="9">9</button>
+        <button class="pin-key clear" type="button" data-pin-key="backspace">⌫</button>
+        <button class="pin-key" type="button" data-pin-key="0">0</button>
+        <button class="pin-key enter" type="button" data-pin-key="enter">✓</button>
       </div>
       <div id="pin-error" style="color:#FF6B6B;font-size:0.82rem;margin-top:14px;min-height:20px;text-align:center;"></div>
       <div class="pin-card-footer">Restricted Access · Deep Chai</div>
@@ -1190,15 +1190,29 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('pin-screen').style.display = 'flex';
   document.getElementById('owner-dashboard').style.display = 'none';
   loadSettings().catch(() => {});
-  // Focus on PIN input if present
+
+  // ── PIN NUMPAD: attach via addEventListener (fixes GitHub Pages CSP issue) ──
+  document.querySelectorAll('[data-pin-key]').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      const k = this.getAttribute('data-pin-key');
+      if (k === 'backspace') { pinClear(); }
+      else if (k === 'enter') { pinEnter(); }
+      else { pinKey(k); }
+    });
+  });
+
+  // Focus first key for quick keyboard access
   const firstKey = document.querySelector('.pin-key');
   if (firstKey) firstKey.focus();
+
   // Keyboard support for PIN
   document.addEventListener('keydown', (e) => {
-    if (!document.getElementById('pin-screen') || document.getElementById('pin-screen').style.display === 'none') return;
-    if (e.key >= '0' && e.key <= '9') { pinKey(e.key); }
-    else if (e.key === 'Backspace') { pinClear(); }
-    else if (e.key === 'Enter') { pinEnter(); }
+    const pinScreen = document.getElementById('pin-screen');
+    if (!pinScreen || pinScreen.style.display === 'none') return;
+    if (e.key >= '0' && e.key <= '9') { e.preventDefault(); pinKey(e.key); }
+    else if (e.key === 'Backspace') { e.preventDefault(); pinClear(); }
+    else if (e.key === 'Enter') { e.preventDefault(); pinEnter(); }
   });
 });
 
@@ -1526,19 +1540,17 @@ function showOwnerApp() {
   document.getElementById('owner-app').classList.add('active');
 }
 
-// PIN — inline style approach (most reliable across all browsers)
+// PIN — use both CSS class and inline style for maximum browser compatibility
 function updatePinDots() {
   for (let i = 0; i < 4; i++) {
     const dot = document.getElementById('pin-dot-' + i);
     if (!dot) continue;
     if (i < state.pinBuffer.length) {
-      dot.style.background = '#C8832A';
-      dot.style.borderColor = '#C8832A';
-      dot.style.transform = 'scale(1.15)';
+      dot.classList.add('filled');
+      dot.style.cssText = 'background:#C8832A !important; border-color:#C8832A !important; transform:scale(1.15);';
     } else {
-      dot.style.background = 'transparent';
-      dot.style.borderColor = 'rgba(212,175,106,0.4)';
-      dot.style.transform = 'scale(1)';
+      dot.classList.remove('filled');
+      dot.style.cssText = 'background:transparent !important; border-color:rgba(212,175,106,0.4) !important; transform:scale(1);';
     }
   }
 }
