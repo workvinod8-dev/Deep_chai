@@ -1434,7 +1434,7 @@ window.saveSpecial = async () => {
   if (firestoreOk) {
     try {
       await setDoc(doc(db, 'settings', 'main'), specialData, { merge: true });
-      showToast('Today's Special updated! ✓', 'success');
+      showToast("Today's Special updated! ✓", 'success');
     } catch(e) { showToast('Save failed', 'error'); }
   } else {
     showToast('Firebase connected nahi — demo mode', 'warning');
